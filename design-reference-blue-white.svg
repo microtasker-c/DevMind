@@ -1,0 +1,108 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="hero" x1="320" y1="190" x2="1210" y2="440" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2457FF"/>
+      <stop offset="0.58" stop-color="#3D8DFF"/>
+      <stop offset="1" stop-color="#66D9FF"/>
+    </linearGradient>
+    <linearGradient id="coverA" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#DDEBFF"/>
+      <stop offset="1" stop-color="#6F8CFF"/>
+    </linearGradient>
+    <linearGradient id="coverB" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#D8F4FF"/>
+      <stop offset="1" stop-color="#A9A5FF"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#173475" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#F7F9FC"/>
+  <rect x="0" y="0" width="1600" height="84" fill="#FFFFFF"/>
+  <path d="M0 83.5H1600" stroke="#DCE6F3"/>
+
+  <g font-family="Arial, 'Microsoft YaHei', sans-serif">
+    <text x="54" y="51" font-size="28" font-weight="700" fill="#10233F">Dev-Mind</text>
+    <rect x="233" y="22" width="438" height="40" rx="20" fill="#F0F5FC"/>
+    <circle cx="259" cy="42" r="8" stroke="#7890B5" stroke-width="2"/>
+    <path d="M265 48L271 54" stroke="#7890B5" stroke-width="2" stroke-linecap="round"/>
+    <text x="282" y="48" font-size="15" fill="#7890B5">搜索技术文章、主题和作者</text>
+    <text x="1237" y="48" font-size="15" font-weight="600" fill="#2457FF">写文章</text>
+    <circle cx="1344" cy="42" r="9" stroke="#7890B5" stroke-width="2"/>
+    <circle cx="1451" cy="42" r="20" fill="#E3ECFF"/>
+    <text x="1439" y="48" font-size="14" font-weight="700" fill="#2457FF">DM</text>
+
+    <rect x="30" y="119" width="224" height="836" rx="20" fill="#EEF3FB"/>
+    <text x="58" y="160" font-size="12" font-weight="700" letter-spacing="2" fill="#7890B5">工作区</text>
+    <rect x="48" y="181" width="188" height="48" rx="14" fill="#2457FF"/>
+    <text x="82" y="211" font-size="15" font-weight="700" fill="#FFFFFF">⌂　首页</text>
+    <text x="82" y="268" font-size="15" fill="#405878">▱　收藏</text>
+    <text x="82" y="325" font-size="15" fill="#405878">✎　我的文章</text>
+    <text x="82" y="382" font-size="15" fill="#405878">♙　个人资料</text>
+    <text x="82" y="439" font-size="15" fill="#405878">◫　数据概览</text>
+    <path d="M58 478H226" stroke="#D0DDED"/>
+    <text x="58" y="519" font-size="12" font-weight="700" letter-spacing="2" fill="#7890B5">正在关注</text>
+    <circle cx="74" cy="560" r="15" fill="#D8F4FF"/>
+    <text x="65" y="565" font-size="10" font-weight="700" fill="#2457FF">AI</text>
+    <text x="103" y="565" font-size="14" fill="#405878">人工智能前沿</text>
+    <circle cx="74" cy="610" r="15" fill="#E7E4FF"/>
+    <text x="65" y="615" font-size="10" font-weight="700" fill="#5F5AE6">FE</text>
+    <text x="103" y="615" font-size="14" fill="#405878">前端工程实践</text>
+    <text x="58" y="901" font-size="13" fill="#7890B5">让经验变成下一条捷径</text>
+
+    <text x="300" y="151" font-size="13" font-weight="700" letter-spacing="1.5" fill="#2457FF">DEV-MIND WEEKLY</text>
+    <text x="300" y="191" font-size="34" font-weight="700" fill="#10233F">今天，读一点能改变工作方式的东西。</text>
+    <text x="300" y="222" font-size="16" fill="#5B7194">精选实践、真实复盘，以及值得收藏的技术观点。</text>
+
+    <g filter="url(#shadow)">
+      <rect x="300" y="254" width="870" height="220" rx="24" fill="url(#hero)"/>
+    </g>
+    <path d="M920 254C1010 303 1025 395 1170 425V474H920V254Z" fill="#FFFFFF" fill-opacity="0.12"/>
+    <path d="M1005 254C1095 307 1070 361 1170 384" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="2"/>
+    <text x="338" y="303" font-size="12" font-weight="700" letter-spacing="1.8" fill="#DFF7FF">编辑精选 · 01</text>
+    <text x="338" y="349" font-size="30" font-weight="700" fill="#FFFFFF">技术团队如何建立真正有效的写作文化</text>
+    <text x="338" y="385" font-size="16" fill="#EAF4FF">把一次排障记录，变成团队下一次少走的弯路。</text>
+    <text x="338" y="430" font-size="14" font-weight="600" fill="#FFFFFF">Dev-Mind Staff　·　6 月 2 日　　阅读文章 →</text>
+
+    <g>
+      <text x="300" y="536" font-size="24" font-weight="700" fill="#10233F">最新洞见</text>
+      <text x="1033" y="536" font-size="14" font-weight="600" fill="#2457FF">精选排序　⌄</text>
+      <path d="M300 555H1170" stroke="#D6E1EF"/>
+    </g>
+
+    <g>
+      <rect x="300" y="584" width="870" height="140" rx="18" fill="#FFFFFF"/>
+      <rect x="325" y="608" width="104" height="92" rx="14" fill="url(#coverA)"/>
+      <text x="459" y="625" font-size="12" font-weight="700" fill="#2457FF">人工智能</text>
+      <text x="459" y="655" font-size="21" font-weight="700" fill="#10233F">AI 不会替代开发者，但会重新定义优秀开发者</text>
+      <text x="459" y="684" font-size="13" fill="#7890B5">林墨　·　今天　·　6 分钟阅读</text>
+      <text x="1108" y="668" font-size="20" fill="#2457FF">▱</text>
+    </g>
+    <g>
+      <rect x="300" y="742" width="870" height="140" rx="18" fill="#FFFFFF"/>
+      <rect x="325" y="766" width="104" height="92" rx="14" fill="url(#coverB)"/>
+      <text x="459" y="783" font-size="12" font-weight="700" fill="#2457FF">职业成长</text>
+      <text x="459" y="813" font-size="21" font-weight="700" fill="#10233F">为什么我在 2026 年招聘设计工程师</text>
+      <text x="459" y="842" font-size="13" fill="#7890B5">周一　·　昨天　·　4 分钟阅读</text>
+      <text x="1108" y="826" font-size="20" fill="#7890B5">▱</text>
+    </g>
+
+    <rect x="1210" y="254" width="330" height="628" rx="22" fill="#FFFFFF"/>
+    <text x="1242" y="300" font-size="18" font-weight="700" fill="#10233F">热门主题</text>
+    <text x="1242" y="330" font-size="13" fill="#7890B5">最近被收藏最多的方向</text>
+    <g font-size="13" font-weight="600">
+      <rect x="1242" y="365" width="118" height="36" rx="18" fill="#E3ECFF"/><text x="1262" y="388" fill="#2457FF">人工智能</text>
+      <rect x="1370" y="365" width="118" height="36" rx="18" fill="#EEF0FF"/><text x="1390" y="388" fill="#5F5AE6">工程实践</text>
+      <rect x="1242" y="413" width="118" height="36" rx="18" fill="#E9F8FF"/><text x="1262" y="436" fill="#1377B8">职业成长</text>
+      <rect x="1370" y="413" width="118" height="36" rx="18" fill="#F1F4FA"/><text x="1390" y="436" fill="#405878">产品设计</text>
+    </g>
+    <path d="M1242 485H1508" stroke="#DCE6F3"/>
+    <text x="1242" y="530" font-size="18" font-weight="700" fill="#10233F">阅读清单</text>
+    <text x="1242" y="565" font-size="14" fill="#405878">▱　3 篇文章待阅读</text>
+    <text x="1242" y="604" font-size="14" fill="#405878">◷　预计 18 分钟</text>
+    <rect x="1242" y="662" width="266" height="52" rx="14" fill="#10233F"/>
+    <text x="1300" y="695" font-size="14" font-weight="700" fill="#FFFFFF">打开我的收藏　→</text>
+    <text x="1242" y="835" font-size="12" fill="#9AAAC0">关于 Dev-Mind　帮助　隐私</text>
+  </g>
+</svg>
