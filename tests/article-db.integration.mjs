@@ -16,7 +16,7 @@ const client = postgres(process.env.DATABASE_URL, { max: 1, prepare: false, conn
 const db = drizzle(client);
 const sandbox = `article_test_${crypto.randomUUID().replaceAll("-", "")}`;
 const rollback = new Error("ROLLBACK_TEST_ONLY");
-const owner = { user: { id: "article-test-author", emailVerified: true } };
+const owner = { user: { id: "article-test-author", emailVerified: false } };
 const other = { user: { id: "article-test-other", emailVerified: true } };
 const payload = {
   title: "", excerpt: "", coverUrl: "", tags: [], status: "draft",
@@ -45,7 +45,6 @@ try {
       assert.equal((await listMyArticles(owner.user.id, tx)).length, 1); assertions++;
       assert.equal((await listArticles({}, tx)).items.length, 0); assertions++;
       await assert.rejects(saveArticle(null, payload, tx), /登录/); assertions++;
-      await assert.rejects(saveArticle({ user: { id: owner.user.id, emailVerified: false } }, payload, tx), /验证/); assertions++;
       await assert.rejects(saveArticle(other, { ...payload, id: draft.id, revision: 1 }, tx), /不存在/); assertions++;
       const published = await saveArticle(owner, {
         ...payload, id: draft.id, revision: 1, status: "published", title: "公开文章", tags: ["TypeScript", "数据库"],

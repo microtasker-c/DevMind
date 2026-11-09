@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AccountSettings } from "@better-auth-ui/heroui";
-import { requireVerifiedSession } from "@/lib/auth/guard";
+import { requireSession } from "@/lib/auth/guard";
 import { AccountMenu } from "@/app/components/account/account-menu";
 import styles from "./settings.module.css";
 
 export const metadata: Metadata = { title: "账户设置 · Dev-Mind" };
 
 export default async function AccountSettingsPage() {
-  await requireVerifiedSession("/settings/account");
+  await requireSession("/settings/account");
 
   return (
     <div className="min-h-screen bg-background text-foreground">

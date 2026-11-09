@@ -1,5 +1,5 @@
 export class ArticleError extends Error {
-  readonly code: "UNAUTHENTICATED" | "UNVERIFIED" | "NOT_FOUND" | "CONFLICT" | "INVALID";
+  readonly code: "UNAUTHENTICATED" | "NOT_FOUND" | "CONFLICT" | "INVALID";
   constructor(code: ArticleError["code"], message: string) {
     super(message);
     this.name = "ArticleError";

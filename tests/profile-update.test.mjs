@@ -2,23 +2,17 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { betterAuth } from "better-auth";
 import { memoryAdapter } from "better-auth/adapters/memory";
-import { validateProfileUpdate } from "../lib/auth/profile-validation.ts";
+import { authOptions } from "../lib/auth/options.ts";
 
 test("profile updates validate input and preserve account ownership", async () => {
   const auth = betterAuth({
     baseURL: "http://localhost:3000",
     secret: "profile-update-test-secret-at-least-32-characters",
     database: memoryAdapter({ user: [], session: [], account: [], verification: [] }),
-    emailAndPassword: { enabled: true },
-    emailVerification: {
-      sendOnSignUp: false,
-      sendVerificationEmail: async ({ url }) => { verificationUrl = url; },
-    },
-    hooks: { before: validateProfileUpdate },
+    ...authOptions,
     rateLimit: { enabled: false },
     logger: { disabled: true },
   });
-  let verificationUrl;
 
   async function post(path, body, cookie) {
     return auth.handler(new Request(`http://localhost:3000/api/auth/${path}`, {
@@ -40,10 +34,7 @@ test("profile updates validate input and preserve account ownership", async () =
   assert.ok(cookie);
 
   assert.equal((await post("update-user", { name: "Anonymous" })).status, 401);
-  assert.equal((await post("update-user", { name: "Unverified" }, cookie)).status, 403);
-  assert.equal((await post("send-verification-email", { email: "profile@example.test" }, cookie)).status, 200);
-  assert.ok(verificationUrl);
-  assert.equal((await auth.handler(new Request(verificationUrl, { headers: { Cookie: cookie } }))).status, 302);
+  assert.equal((await post("update-user", { name: "Unverified" }, cookie)).status, 200);
   for (const body of [
     { name: "   " }, { name: "a".repeat(81) }, { name: 123 }, {},
     { name: "Injected", id: "another-user" },

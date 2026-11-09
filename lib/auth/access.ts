@@ -14,6 +14,5 @@ export function safeReturnTo(value: unknown): string {
 export function getAccessDecision(session: AccessSession, returnTo: string): string | null {
   const destination = encodeURIComponent(safeReturnTo(returnTo));
   if (!session) return `/auth/sign-in?redirectTo=${destination}`;
-  if (!session.user.emailVerified) return `/verify-email?returnTo=${destination}`;
   return null;
 }

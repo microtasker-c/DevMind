@@ -1,16 +1,16 @@
 import Link from "next/link";
-import { requireVerifiedSession } from "@/lib/auth/guard";
+import { requireSession } from "@/lib/auth/guard";
 import { listMyArticles } from "@/lib/articles/queries";
 import { ArticleLayout } from "@/app/components/articles/article-layout";
 
 export const metadata = { title: "我的文章 · Dev-Mind" };
 export default async function MyArticlesPage() {
-  const session = await requireVerifiedSession("/my/articles");
+  const session = await requireSession("/my/articles");
   const articles = await listMyArticles(session.user.id);
   return (
     <ArticleLayout activeItem="我的文章">
       <div className="flex items-center justify-between border-b border-divider pb-6">
-        <h1 className="text-3xl font-semibold">我的文章</h1><Link className="text-sm underline underline-offset-4" href="/write">写新文章</Link>
+        <h1 className="text-3xl font-semibold">我的文章</h1>
       </div>
       {articles.length ? <ul className="divide-y divide-divider">{articles.map((article) => (
         <li key={article.id} className="space-y-3 py-6">

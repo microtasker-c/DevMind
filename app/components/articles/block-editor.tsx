@@ -18,13 +18,14 @@ type Props = {
 export default function BlockEditor({ document, onChange, readOnly = false, disabled = false }: Props) {
   const editor = useCreateBlockNote({
     schema: articleEditorSchema,
-    dictionary: { ...zh, placeholders: { ...zh.placeholders, default: "开始写作，使用上方工具栏设置格式" } },
+    dictionary: { ...zh, placeholders: { ...zh.placeholders, default: "从一个想法开始…" } },
     initialContent: document.length ? toEditorDocument(document) : undefined,
     trailingBlock: !readOnly,
   });
   return (
     <div className={`article-blocknote ${readOnly ? "article-reader" : "article-writer"}`}>
       {!readOnly && <EditorToolbar editor={editor} disabled={disabled} />}
+      <div className={readOnly ? undefined : "article-writing-content"}>
       <BlockNoteViewRaw
         editor={editor}
         theme="light"
@@ -33,6 +34,7 @@ export default function BlockEditor({ document, onChange, readOnly = false, disa
         formattingToolbar={false} linkToolbar={false} slashMenu={false} sideMenu={false}
         filePanel={false} tableHandles={false} emojiPicker={false} comments={false}
       />
+      </div>
     </div>
   );
 }

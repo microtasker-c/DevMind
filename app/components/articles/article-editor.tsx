@@ -51,8 +51,8 @@ export function ArticleEditor({ initial }: { initial?: ArticleDetail }) {
     } finally { setPending(false); }
   }
   return (
-    <div className="space-y-7">
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-divider pb-5">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold">{published ? "编辑文章" : "写文章"}</h1>
           <p className="mt-1 text-sm text-muted">{published ? "保存后会立即更新公开内容。" : "先记录你的想法，准备好后再发布。"}</p>
@@ -63,11 +63,14 @@ export function ArticleEditor({ initial }: { initial?: ArticleDetail }) {
         </div>
       </div>
       <fieldset disabled={pending} className="min-w-0 space-y-6">
-        <TextField value={title} onChange={change(setTitle)} maxLength={200} className="w-full">
-          <Label>文章标题</Label>
-          <Input style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)", lineHeight: 1.3 }} className="h-auto rounded-none border-0 bg-transparent px-0 py-3 font-semibold shadow-none" placeholder="写下你想分享的技术洞见" />
-        </TextField>
-        <BlockEditor document={initial?.document ?? []} disabled={pending} onChange={(next) => { setDocument(next); setDirty(true); setMessage(""); }} />
+        <section aria-label="文章写作区" className="rounded-xl border border-divider bg-surface shadow-sm">
+          <TextField value={title} onChange={change(setTitle)} maxLength={200} className="mx-auto w-full max-w-4xl px-6 pt-10 pb-6 sm:px-12 sm:pt-14">
+            <Label className="sr-only">文章标题</Label>
+            <TextArea rows={1} style={{ fontSize: "clamp(1.75rem, 3vw, 2.5rem)", lineHeight: 1.35 }} className="h-auto min-h-16 w-full resize-none rounded-none border-0 bg-transparent px-0 py-2 font-semibold tracking-tight shadow-none field-sizing-content focus:outline-none focus:ring-0" placeholder="文章标题" />
+          </TextField>
+          <BlockEditor document={initial?.document ?? []} disabled={pending} onChange={(next) => { setDocument(next); setDirty(true); setMessage(""); }} />
+        </section>
+        <div className="mx-auto w-full max-w-4xl space-y-6 px-1 sm:px-12">
         <TextField value={tags} onChange={change(setTags)} className="w-full">
           <Label>技术标签</Label><Input placeholder="例如：React, TypeScript" />
           <Description>使用逗号分隔，最多 5 个标签。</Description>
@@ -86,6 +89,7 @@ export function ArticleEditor({ initial }: { initial?: ArticleDetail }) {
             {!published && <Button isDisabled={pending} onPress={() => save("published")}>确认发布</Button>}
           </section>
         )}
+        </div>
       </fieldset>
       {error && <p role="alert" className="rounded-lg border border-danger/30 p-4 text-sm text-danger">{error}</p>}
       <div role="status" aria-live="polite" className="flex flex-wrap items-center gap-4 text-sm text-muted">

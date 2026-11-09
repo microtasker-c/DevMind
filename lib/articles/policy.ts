@@ -3,7 +3,6 @@ import type { ArticleStatus, ArticleWriterSession } from "./types";
 
 export function requireArticleWriter(session: ArticleWriterSession): string {
   if (!session) throw new ArticleError("UNAUTHENTICATED", "请先登录后再保存文章。");
-  if (!session.user.emailVerified) throw new ArticleError("UNVERIFIED", "请先验证邮箱后再保存文章。");
   return session.user.id;
 }
 

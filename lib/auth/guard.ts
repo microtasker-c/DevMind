@@ -8,7 +8,7 @@ export async function getAuthoritativeSession() {
   return auth.api.getSession({ headers: await headers(), query: { disableCookieCache: true } });
 }
 
-export async function requireVerifiedSession(returnTo: string): Promise<AuthSession> {
+export async function requireSession(returnTo: string): Promise<AuthSession> {
   const session = await getAuthoritativeSession();
   const destination = getAccessDecision(session, returnTo);
   if (destination) redirect(destination as Route);

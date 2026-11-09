@@ -33,7 +33,8 @@ export function Providers({ children }: { children: ReactNode }) {
       }}
       emailAndPassword={{
         enabled: true,
-        requireEmailVerification: true,
+        requireEmailVerification: false,
+        forgotPassword: false,
         confirmPassword: true,
         name: true,
       }}

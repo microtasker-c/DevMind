@@ -86,9 +86,9 @@ test("cursor validates exact timestamp and UUID and does not accept arbitrary SQ
   }
 });
 
-test("write policy blocks anonymous, unverified and other authors and stale/downgrade saves", () => {
+test("write policy allows unverified accounts but blocks anonymous and other authors and stale/downgrade saves", () => {
   assert.throws(() => requireArticleWriter(null), /登录/);
-  assert.throws(() => requireArticleWriter({ user: { id: "a", emailVerified: false } }), /验证/);
+  assert.equal(requireArticleWriter({ user: { id: "a", emailVerified: false } }), "a");
   assert.equal(requireArticleWriter({ user: { id: "a", emailVerified: true } }), "a");
   const article = { authorId: "a", revision: 2, status: "published" };
   assert.throws(() => checkArticleEdit(article, "b", 2, "published"), /不存在/);

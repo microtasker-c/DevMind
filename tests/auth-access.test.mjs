@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { getAccessDecision, safeReturnTo } from "../lib/auth/access.ts";
 
-test("private routes distinguish anonymous, unverified and verified accounts", () => {
+test("private routes require login but do not require email verification", () => {
   assert.equal(getAccessDecision(null, "/write"), "/auth/sign-in?redirectTo=%2Fwrite");
-  assert.equal(getAccessDecision({ user: { emailVerified: false } }, "/write"), "/verify-email?returnTo=%2Fwrite");
+  assert.equal(getAccessDecision({ user: { emailVerified: false } }, "/write"), null);
   assert.equal(getAccessDecision({ user: { emailVerified: true } }, "/write"), null);
 });
 
