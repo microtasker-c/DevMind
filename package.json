@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --import ./tests/register-loader.mjs --test tests/*.test.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.7",
+    "@next/env": "15.5.29",
     "@tailwindcss/postcss": "^4.1.14",
     "@types/node": "^22.15.30",
     "@types/react": "^19.1.2",

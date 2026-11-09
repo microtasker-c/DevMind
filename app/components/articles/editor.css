@@ -1,0 +1,26 @@
+.article-blocknote .bn-container {
+  --bn-colors-editor-background: var(--surface);
+  --bn-colors-editor-text: var(--foreground);
+  --bn-font-family: var(--font-sans);
+  color: var(--foreground);
+  background: var(--surface);
+}
+.article-blocknote .bn-editor {
+  padding: 24px 0;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+.article-writer .bn-editor { min-height: 420px; }
+.article-blocknote .bn-block-content[data-content-type="codeBlock"] {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.article-blocknote a { text-decoration: underline; text-underline-offset: 3px; }
+.article-reader .bn-editor { padding-top: 0; }
+@media (max-width: 640px) {
+  .article-blocknote .bn-editor { font-size: 16px; }
+}

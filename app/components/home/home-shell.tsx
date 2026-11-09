@@ -1,54 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
 import { ArticleFeed } from "./article-feed";
-import { articles } from "./home-data";
+import type { ArticleSummary } from "@/lib/articles/types";
 import { RightRail } from "./right-rail";
-import { Sidebar } from "./sidebar";
-import { Topbar } from "./topbar";
+import { CommunityShell } from "./community-shell";
 
-export function HomeShell() {
-  const [activeItem, setActiveItem] = useState("首页");
-  const [search, setSearch] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const filteredArticles = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
-    if (!keyword) return articles;
-
-    return articles.filter((article) =>
-      [article.title, article.excerpt, article.author, article.topic].some((value) =>
-        value.toLowerCase().includes(keyword),
-      ),
-    );
-  }, [search]);
+export function HomeShell({ articles, query, nextCursor }: { articles: ArticleSummary[]; query: string; nextCursor: string | null }) {
+  const nextQuery = new URLSearchParams({ ...(query ? { q: query } : {}), ...(nextCursor ? { cursor: nextCursor } : {}) });
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Topbar
-        isSidebarOpen={isSidebarOpen}
-        onMenuPress={() => setIsSidebarOpen((open) => !open)}
-        onSearch={setSearch}
-      />
-      <div
-        className={`mx-auto grid w-full max-w-[1800px] grid-cols-1 gap-8 px-5 lg:gap-14 lg:px-10 ${
-          isSidebarOpen
-            ? "lg:grid-cols-[248px_minmax(0,1fr)_340px]"
-            : "lg:grid-cols-[minmax(0,1fr)_340px]"
-        }`}
-      >
-        <Sidebar
-          activeItem={activeItem}
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          onSelect={setActiveItem}
-        />
-        <main className="min-w-0 py-8 sm:py-10">
-          <ArticleFeed articles={filteredArticles} />
-        </main>
-        <div className="hidden py-10 lg:block">
-          <RightRail />
-        </div>
-      </div>
-    </div>
+    <CommunityShell
+      activeItem="首页"
+      query={query}
+      aside={<div className="hidden py-10 lg:block"><RightRail articles={articles} /></div>}
+    >
+      <ArticleFeed articles={articles} query={query} />
+      {nextCursor && <Link className="mt-8 block text-center text-sm underline underline-offset-4" href={`/?${nextQuery.toString()}`}>下一页</Link>}
+      {query && <Link className="mt-5 block text-center text-sm text-muted underline" href="/">清除搜索</Link>}
+    </CommunityShell>
   );
 }

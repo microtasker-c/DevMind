@@ -1,0 +1,5 @@
+/* The installed UI version renders ChangeAvatar despite avatar.enabled=false.
+   Hide that whole control until the avatar workflow is agreed upon. */
+.accountSettings div:has(> input[type="file"]) {
+  display: none;
+}

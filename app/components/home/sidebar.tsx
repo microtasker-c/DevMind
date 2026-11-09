@@ -7,7 +7,7 @@ type SidebarProps = {
   activeItem: string;
   onSelect: (item: string) => void;
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 const items = [
@@ -37,7 +37,9 @@ export function Sidebar({ activeItem, onSelect, isOpen, onClose }: SidebarProps)
               variant="ghost"
               onPress={() => {
                 onSelect(item.label);
-                onClose();
+                if (window.matchMedia("(max-width: 1023px)").matches) {
+                  onClose?.();
+                }
               }}
             >
               <Icon name={item.icon} size={19} />

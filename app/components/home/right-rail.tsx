@@ -1,48 +1,17 @@
-import { Button, Card } from "@heroui/react";
-import { staffPicks, topics } from "./home-data";
-import { Icon } from "./icons";
+import Link from "next/link";
+import type { ArticleSummary } from "@/lib/articles/types";
 
-export function RightRail() {
+export function RightRail({ articles }: { articles: ArticleSummary[] }) {
+  const topics = [...new Set(articles.flatMap((article) => article.tags))].slice(0, 10);
   return (
     <aside className="space-y-7">
-      <Card className="border-divider bg-surface p-5 shadow-none">
-        <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-foreground">编辑精选</h2>
-          <Icon name="spark" size={18} />
-        </div>
-        <div className="mt-5 space-y-5">
-          {staffPicks.map((pick, index) => (
-            <article key={pick.title}>
-              <p className="text-xs font-medium text-accent">
-                0{index + 1} · {pick.date}
-              </p>
-              <h3 className="mt-1 font-medium leading-6 text-foreground">{pick.title}</h3>
-              <p className="mt-1 text-xs text-muted">{pick.author}</p>
-            </article>
-          ))}
-        </div>
-        <Button className="mt-5 px-0 text-accent" variant="ghost">
-          查看全部 <Icon name="arrow" size={15} />
-        </Button>
-      </Card>
-      <div>
-        <h2 className="font-semibold text-foreground">热门主题</h2>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {topics.map((topic) => (
-            <Button
-              key={topic}
-              className="h-8 rounded-full border-divider px-3 text-xs text-muted"
-              variant="outline"
-            >
-              {topic}
-            </Button>
-          ))}
-        </div>
-      </div>
-      <div className="border-t border-divider pt-5 text-xs leading-5 text-muted">
-        关于 Dev-Mind　帮助　隐私
-        <br />© 2026 Dev-Mind Community
-      </div>
+      <section className="border-b border-divider pb-6">
+        <h2 className="font-semibold">分享你的经验</h2>
+        <p className="mt-3 text-sm leading-7 text-muted">一次排障、一段实践、一个新发现，都可以成为下一位开发者的起点。</p>
+        <Link href="/write" className="mt-4 inline-block text-sm underline underline-offset-4">写一篇文章</Link>
+      </section>
+      {topics.length > 0 && <section><h2 className="font-semibold">探索技术标签</h2><div className="mt-4 flex flex-wrap gap-2">{topics.map((topic) => <Link key={topic} href={`/?q=${encodeURIComponent(topic)}`} className="rounded-full border border-divider px-3 py-1.5 text-xs text-muted">{topic}</Link>)}</div></section>}
+      <div className="text-xs leading-5 text-muted">Dev-Mind<br />为开发者沉淀可复用的答案<br />© 2026 Dev-Mind Community</div>
     </aside>
   );
 }
