@@ -86,13 +86,16 @@ test("cursor validates exact timestamp and UUID and does not accept arbitrary SQ
   }
 });
 
-test("write policy allows unverified accounts but blocks anonymous and other authors and stale/downgrade saves", () => {
+test("write policy allows draft edits and publishing but locks published articles", () => {
   assert.throws(() => requireArticleWriter(null), /登录/);
   assert.equal(requireArticleWriter({ user: { id: "a", emailVerified: false } }), "a");
   assert.equal(requireArticleWriter({ user: { id: "a", emailVerified: true } }), "a");
   const article = { authorId: "a", revision: 2, status: "published" };
-  assert.throws(() => checkArticleEdit(article, "b", 2, "published"), /不存在/);
-  assert.throws(() => checkArticleEdit(article, "a", 1, "published"), /更新/);
-  assert.throws(() => checkArticleEdit(article, "a", 2, "draft"), /已发布/);
-  assert.doesNotThrow(() => checkArticleEdit(article, "a", 2, "published"));
+  assert.throws(() => checkArticleEdit(article, "b", 2), /不存在/);
+  assert.throws(() => checkArticleEdit(article, "a", 1), /更新/);
+  assert.throws(() => checkArticleEdit(article, "a", 2), /已发布/);
+  assert.throws(() => checkArticleEdit(article, "a", 2), /已发布.*不可编辑/);
+  const draft = { ...article, status: "draft" };
+  assert.doesNotThrow(() => checkArticleEdit(draft, "a", 2));
+  assert.throws(() => checkArticleEdit(draft, "a", 1), /更新/);
 });

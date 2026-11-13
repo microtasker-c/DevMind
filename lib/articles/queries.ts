@@ -1,5 +1,6 @@
 import { and, desc, eq, getTableColumns, ilike, inArray, lt, or, sql } from "drizzle-orm";
 import { getDb } from "../db/client";
+import { retryDatabaseRead } from "../db/read";
 import { user } from "../db/schema";
 import { articles, articleContents, articleTags, tags } from "../db/article-schema";
 import { parseArticleDocument } from "./document-schema";
@@ -13,6 +14,11 @@ const selection = {
 };
 type SelectedArticle = typeof articles.$inferSelect & { author: { name: string; image: string | null } };
 type QueryDatabase = Pick<ReturnType<typeof getDb>, "select">;
+
+function readFromDatabase<T>(database: QueryDatabase | undefined, read: (db: QueryDatabase) => Promise<T>): Promise<T> {
+  // A caller-owned transaction must handle its own failure and rollback.
+  return database ? read(database) : retryDatabaseRead(() => read(getDb()));
+}
 
 async function toSummaries(rows: SelectedArticle[], db: QueryDatabase): Promise<ArticleSummary[]> {
   if (!rows.length) return [];
@@ -39,26 +45,27 @@ export async function listArticles(
   { query = "", cursor }: { query?: string; cursor?: string } = {},
   database?: QueryDatabase,
 ): Promise<ArticlePage> {
-  const db = database ?? getDb();
   if (query.length > 100) throw new ArticleError("INVALID", "搜索关键词最多 100 字。");
   const page = cursor ? parseCursor(cursor) : null;
   const keyword = query.trim();
   const pattern = `%${keyword.replace(/[\\%_]/g, "\\$&")}%`;
-  const rows = await db.select(selection).from(articles).innerJoin(user, eq(articles.authorId, user.id))
-    .where(and(
-      eq(articles.status, "published"),
-      keyword ? or(
-        ilike(articles.title, pattern), ilike(articles.excerpt, pattern), ilike(user.name, pattern),
-        sql`exists (select 1 from ${articleTags} inner join ${tags} on ${tags.id} = ${articleTags.tagId} where ${articleTags.articleId} = ${articles.id} and ${tags.name} ilike ${pattern})`,
-      ) : undefined,
-      page ? or(lt(articles.publishedAt, new Date(page.publishedAt)), and(eq(articles.publishedAt, new Date(page.publishedAt)), lt(articles.id, page.id))) : undefined,
-    )).orderBy(desc(articles.publishedAt), desc(articles.id)).limit(13);
-  const items = await toSummaries(rows.slice(0, 12), db);
-  const last = items.at(-1);
-  return {
-    items,
-    nextCursor: rows.length > 12 && last?.publishedAt ? encodeCursor({ id: last.id, publishedAt: last.publishedAt }) : null,
-  };
+  return readFromDatabase(database, async (db) => {
+    const rows = await db.select(selection).from(articles).innerJoin(user, eq(articles.authorId, user.id))
+      .where(and(
+        eq(articles.status, "published"),
+        keyword ? or(
+          ilike(articles.title, pattern), ilike(articles.excerpt, pattern), ilike(user.name, pattern),
+          sql`exists (select 1 from ${articleTags} inner join ${tags} on ${tags.id} = ${articleTags.tagId} where ${articleTags.articleId} = ${articles.id} and ${tags.name} ilike ${pattern})`,
+        ) : undefined,
+        page ? or(lt(articles.publishedAt, new Date(page.publishedAt)), and(eq(articles.publishedAt, new Date(page.publishedAt)), lt(articles.id, page.id))) : undefined,
+      )).orderBy(desc(articles.publishedAt), desc(articles.id)).limit(13);
+    const items = await toSummaries(rows.slice(0, 12), db);
+    const last = items.at(-1);
+    return {
+      items,
+      nextCursor: rows.length > 12 && last?.publishedAt ? encodeCursor({ id: last.id, publishedAt: last.publishedAt }) : null,
+    };
+  });
 }
 
 async function readArticle(id: string, authorId: string | undefined, db: QueryDatabase): Promise<ArticleDetail | null> {
@@ -75,18 +82,19 @@ async function readArticle(id: string, authorId: string | undefined, db: QueryDa
 }
 
 export function getArticle(id: string, database?: QueryDatabase): Promise<ArticleDetail | null> {
-  return readArticle(id, undefined, database ?? getDb());
+  return readFromDatabase(database, (db) => readArticle(id, undefined, db));
 }
 
 /** Caller supplies the author from a verified server session, never from form data. */
 export function getOwnedArticle(id: string, authorId: string, database?: QueryDatabase): Promise<ArticleDetail | null> {
   if (!authorId) return Promise.resolve(null);
-  return readArticle(id, authorId, database ?? getDb());
+  return readFromDatabase(database, (db) => readArticle(id, authorId, db));
 }
 
 export async function listMyArticles(authorId: string, database?: QueryDatabase): Promise<ArticleSummary[]> {
-  const db = database ?? getDb();
-  const rows = await db.select(selection).from(articles).innerJoin(user, eq(articles.authorId, user.id))
-    .where(eq(articles.authorId, authorId)).orderBy(desc(articles.updatedAt), desc(articles.id));
-  return toSummaries(rows, db);
+  return readFromDatabase(database, async (db) => {
+    const rows = await db.select(selection).from(articles).innerJoin(user, eq(articles.authorId, user.id))
+      .where(eq(articles.authorId, authorId)).orderBy(desc(articles.updatedAt), desc(articles.id));
+    return toSummaries(rows, db);
+  });
 }

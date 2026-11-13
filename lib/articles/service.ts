@@ -26,7 +26,7 @@ export async function saveArticle(
     if (value.id) {
       const [current] = await tx.select().from(articles)
         .where(and(eq(articles.id, value.id), eq(articles.authorId, authorId))).for("update");
-      checkArticleEdit(current, authorId, value.revision, value.status);
+      checkArticleEdit(current, authorId, value.revision);
       const [updated] = await tx.update(articles).set({
         ...fields, revision: current.revision + 1,
         publishedAt: current.publishedAt ?? (value.status === "published" ? now : null),

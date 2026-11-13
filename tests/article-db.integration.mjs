@@ -57,15 +57,14 @@ try {
       assert.equal((await tx.execute(sql`select count(*)::int as n from article_tags where article_id = ${draft.id}`))[0].n, 2); assertions++;
       await assert.rejects(saveArticle(owner, { ...payload, id: draft.id, revision: 1 }, tx), /更新/); assertions++;
       await assert.rejects(saveArticle(owner, { ...payload, id: draft.id, revision: 2 }, tx), /已发布/); assertions++;
-      const update = await saveArticle(owner, {
+      await assert.rejects(saveArticle(owner, {
         ...payload, id: draft.id, revision: 2, status: "published", title: "更新立即公开", tags: ["TypeScript"],
         document: [{ type: "paragraph", content: "更新后的正文" }],
-      }, tx);
-      assert.equal(update.revision, 3); assertions++;
+      }, tx), /已发布.*不可编辑/); assertions++;
       rows = await tx.execute(sql`select title, published_at from articles where id = ${draft.id}`);
-      assert.equal(rows[0].title, "更新立即公开"); assert.deepEqual(rows[0].published_at, publishedAt); assertions += 2;
-      assert.equal((await tx.execute(sql`select count(*)::int as n from article_tags where article_id = ${draft.id}`))[0].n, 1); assertions++;
-      assert.equal((await getArticle(draft.id, tx)).title, "更新立即公开"); assertions++;
+      assert.equal(rows[0].title, "公开文章"); assert.deepEqual(rows[0].published_at, publishedAt); assertions += 2;
+      assert.equal((await tx.execute(sql`select count(*)::int as n from article_tags where article_id = ${draft.id}`))[0].n, 2); assertions++;
+      assert.equal((await getArticle(draft.id, tx)).title, "公开文章"); assertions++;
       assert.equal((await listArticles({ query: "TypeScript" }, tx)).items.length, 1); assertions++;
       assert.equal((await listArticles({ query: "测试作者" }, tx)).items.length, 1); assertions++;
       assert.equal((await listArticles({ query: "无结果" }, tx)).items.length, 0); assertions++;

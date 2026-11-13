@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getArticle } from "@/lib/articles/queries";
 import { ArticleBody } from "@/app/components/articles/article-body";
 import { ArticleLayout } from "@/app/components/articles/article-layout";
 
+const getCachedArticle = cache(getArticle);
+
 type Props = { params: Promise<{ id: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const article = await getArticle((await params).id);
+  const article = await getCachedArticle((await params).id);
   return { title: article ? `${article.title} · Dev-Mind` : "文章未找到 · Dev-Mind", description: article?.excerpt };
 }
 
 export default async function ArticlePage({ params }: Props) {
-  const article = await getArticle((await params).id);
+  const article = await getCachedArticle((await params).id);
   if (!article) notFound();
   return (
     <ArticleLayout readingMode>

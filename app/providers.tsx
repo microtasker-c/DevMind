@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { authClient } from "@/lib/auth/client";
 import { accountSettingsPlugin } from "./components/account/read-only-email";
+import { NavigationToastProvider } from "./components/ui/navigation-toast";
 
 const queryClient = new QueryClient();
 
@@ -39,8 +40,8 @@ export function Providers({ children }: { children: ReactNode }) {
         name: true,
       }}
     >
-      {children}
-      <Toast.Provider />
+      <NavigationToastProvider>{children}</NavigationToastProvider>
+      <Toast.Provider placement="bottom end" />
     </AuthProvider>
   );
 }
