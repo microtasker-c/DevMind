@@ -1,4 +1,4 @@
-import { Card } from "@heroui/react";
+import { Avatar, Card } from "@heroui/react";
 import Link from "next/link";
 import type { ArticleSummary } from "@/lib/articles/types";
 
@@ -28,7 +28,10 @@ function ArticleCard({ article }: { article: ArticleSummary }) {
     <Card className="border-divider/80 bg-surface p-5 shadow-none sm:p-6">
       <Card.Content>
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">{article.author.name.slice(0, 1)}</span>
+          <Avatar size="sm" color="accent" className="shrink-0 rounded-full">
+            <Avatar.Image src={article.author.image ?? undefined} alt={`${article.author.name}的头像`} loading="lazy" />
+            <Avatar.Fallback>{article.author.name.slice(0, 1)}</Avatar.Fallback>
+          </Avatar>
           <span className="font-medium text-foreground">{article.author.name}</span>
           {article.publishedAt && <time dateTime={article.publishedAt}>{new Date(article.publishedAt).toLocaleDateString("zh-CN", { timeZone: "Asia/Shanghai" })}</time>}
         </div>

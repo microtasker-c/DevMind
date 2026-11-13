@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AccountSettings } from "@better-auth-ui/heroui";
+import { ProfileSettings } from "@/app/components/account/profile-settings";
 import { requireSession } from "@/lib/auth/guard";
 import { AccountMenu } from "@/app/components/account/account-menu";
-import styles from "./settings.module.css";
 
 export const metadata: Metadata = { title: "账户设置 · Dev-Mind" };
 
@@ -24,7 +23,7 @@ export default async function AccountSettingsPage() {
           <h1 className="text-3xl font-semibold tracking-tight">账户设置</h1>
           <p className="mt-3 text-sm text-muted">管理你在 Dev-Mind 展示的个人资料。</p>
         </div>
-        <AccountSettings className={styles.accountSettings} />
+        <ProfileSettings />
       </main>
     </div>
   );

@@ -1,9 +1,11 @@
 import { APIError, createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
 import { z } from "zod";
+import { getOwnedAvatarPath } from "../avatars/config";
 
 export const profileUpdateSchema = z.object({
-  name: z.string().trim().min(1, "姓名不能为空").max(80, "姓名不能超过 80 个字符"),
-}).strict();
+  name: z.string().trim().min(1, "姓名不能为空").max(80, "姓名不能超过 80 个字符").optional(),
+  image: z.string().url().max(2048).nullable().optional(),
+}).strict().refine((value) => value.name !== undefined || value.image !== undefined, "请选择要更新的资料");
 
 export const validateAuthRequest = createAuthMiddleware(async (ctx) => {
   // Includes the token callback route, which disabledPaths does not pattern-match.
@@ -18,8 +20,12 @@ export const validateAuthRequest = createAuthMiddleware(async (ctx) => {
   const result = profileUpdateSchema.safeParse(ctx.body);
   if (!result.success) {
     throw new APIError("BAD_REQUEST", {
-      message: result.error.issues[0]?.message ?? "仅支持修改姓名",
+      message: result.error.issues[0]?.message ?? "仅支持修改姓名和头像",
     });
+  }
+
+  if (result.data.image && !getOwnedAvatarPath(result.data.image, session.user.id)) {
+    throw new APIError("BAD_REQUEST", { message: "请上传自己的头像图片" });
   }
 
   // Better Auth retains session authorization, origin checks and cookie updates.

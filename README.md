@@ -72,11 +72,21 @@ Remove-Item Env:RUN_DB_INTEGRATION
 ## 账户设置
 
 登录后，悬停或点击右上角头像，选择 Settings 进入 `/settings/account`。
-页面使用 Better Auth UI 的 `AccountSettings`，支持修改姓名；邮箱只读，头像操作待后续接入。
+页面使用项目内的 `ProfileSettings` 表单和 HeroUI 组件，支持修改姓名和上传头像，邮箱只读。点击“保存更改”后明确显示成功或失败 toast；姓名校验失败也显示 toast 并保留输入。资料更新成功后刷新服务器页面数据，主页文章列表读取作者头像 URL，无头像或加载失败时显示姓名首字。
 
-姓名更新复用 `POST /api/auth/update-user`，由 Better Auth 校验会话和请求来源，并要求邮箱已验证。
-服务端仅接受 `name`，去除首尾空白后长度须为 1–80 个字符；不接受客户端指定用户 ID 或修改邮箱、头像。
+姓名和头像更新复用 `POST /api/auth/update-user`，由 Better Auth 校验会话和请求来源，不要求邮箱已验证。
+服务端仅接受 `name` 和 `image`：姓名去除首尾空白后长度须为 1–80 个字符；头像只接受当前 Supabase 项目 `avatars` 桶中属于当前用户的上传 URL（或 `null` 以移除头像）。不能指定用户 ID、修改邮箱或保存任意外部 URL / Base64。
 保存成功后，组件会刷新会话资料并提示结果。
+
+### 头像存储
+
+在 `.env.local` 和部署平台配置 `NEXT_PUBLIC_SUPABASE_URL`、`SUPABASE_SECRET_KEY`（或旧版 `SUPABASE_SERVICE_ROLE_KEY`）。密钥仅供服务端使用，不加 `NEXT_PUBLIC_` 前缀。
+在 Supabase Storage 创建公开读取的 `avatars` 桶，限制文件大小为 2 MB、类型为 PNG / JPEG / WebP；已有其他桶时可设置 `SUPABASE_AVATAR_BUCKET`。不要添加允许匿名上传、修改或删除的策略。
+
+用户只需选择图片：浏览器将不超过 2 MB 的 PNG / JPEG / WebP 居中裁成 256px 方形 PNG，上传到 `POST /api/account/avatar`。服务端校验 Better Auth 会话、同源请求、请求体大小和图片文件签名，然后使用服务端密钥上传到 `用户 ID/随机 UUID.png`，返回 Supabase 生成的公开 URL；Better Auth 将 URL 保存到已有 `user.image` 字段，无需数据库迁移。
+选择头像只在本地预览，不上传图片或更新账户。点击“保存更改”后才上传所选头像，并将姓名和头像 URL 一起提交保存；没有选择新头像时只保存姓名。保存失败保留输入和所选图片，成功后清除待保存状态并刷新会话及页面。更换使用新 URL，避免 CDN 缓存旧图片。设置页不提供移除头像操作。
+
+上传接口按当前服务实例限制每用户每分钟最多 10 次；多实例部署的全局配额需另配共享限流。移除头像只清空资料引用，更换或移除后的旧对象以及上传后未完成资料保存的对象仍保留在桶内，可按后续保留策略清理。
 
 运行接口测试（使用内存适配器，不访问真实数据库，需要 Node.js 22.6+）：
 

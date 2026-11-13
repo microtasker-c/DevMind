@@ -5,6 +5,8 @@ import { memoryAdapter } from "better-auth/adapters/memory";
 import { authOptions } from "../lib/auth/options.ts";
 
 test("profile updates validate input and preserve account ownership", async () => {
+  process.env.NEXT_PUBLIC_SUPABASE_URL = "https://avatar-test.supabase.co";
+  process.env.SUPABASE_AVATAR_BUCKET = "avatars";
   const auth = betterAuth({
     baseURL: "http://localhost:3000",
     secret: "profile-update-test-secret-at-least-32-characters",
@@ -51,5 +53,17 @@ test("profile updates validate input and preserve account ownership", async () =
   const session = await sessionResponse.json();
   assert.equal(session.user.name, "新姓名");
   assert.equal(session.user.email, "profile@example.test");
+  const image = "https://avatar-test.supabase.co/storage/v1/object/public/avatars/" + session.user.id + "/12345678-1234-4234-8234-123456789abc.png";
+  for (const invalid of [
+    image.replace(session.user.id, "another-user"), image.replace("avatar-test.supabase.co", "attacker.test"),
+    image + "?download=1", image.replace("avatars/", "other-bucket/"),
+    image.replace("12345678-1234-4234-8234-123456789abc.png", "../other/avatar.png"),
+    "javascript:alert(1)", "data:image/png;base64,AAAA",
+  ]) assert.equal((await post("update-user", { image: invalid }, cookie)).status, 400);
+  assert.equal((await post("update-user", { image }, cookie)).status, 200);
+  const updated = await (await auth.handler(new Request("http://localhost:3000/api/auth/get-session", { headers: { Cookie: cookie } }))).json();
+  assert.equal(updated.user.image, image);
+  assert.equal(updated.user.name, "新姓名");
+  assert.equal((await post("update-user", { image: null }, cookie)).status, 200);
   assert.equal((await post("change-email", { newEmail: "other@example.test" }, cookie)).status, 400);
 });
