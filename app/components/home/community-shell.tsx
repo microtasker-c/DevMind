@@ -13,17 +13,18 @@ type CommunityShellProps = {
   query?: string;
   mainClassName?: string;
   writingMode?: boolean;
+  readingMode?: boolean;
 };
 
-export function CommunityShell({ activeItem, children, aside, query = "", mainClassName = "py-8 sm:py-10", writingMode = false }: CommunityShellProps) {
+export function CommunityShell({ activeItem, children, aside, query = "", mainClassName = "py-8 sm:py-10", writingMode = false, readingMode = false }: CommunityShellProps) {
   const router = useRouter();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(!writingMode);
-  const columns = writingMode
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!writingMode && !readingMode);
+  const columns = writingMode || readingMode
     ? isSidebarOpen ? "lg:grid-cols-[248px_minmax(0,1fr)]" : "lg:grid-cols-1"
     : isSidebarOpen ? "lg:grid-cols-[248px_minmax(0,1fr)_340px]" : "lg:grid-cols-[minmax(0,1fr)_340px]";
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className={`min-h-screen text-foreground ${readingMode ? "bg-surface" : "bg-background"}`}>
       <Topbar isSidebarOpen={isSidebarOpen} onMenuPress={() => setIsSidebarOpen((open) => !open)} query={query} />
       <div className={`mx-auto grid w-full max-w-[1800px] grid-cols-1 gap-8 px-5 lg:gap-14 lg:px-10 ${columns}`}>
         <Sidebar
@@ -37,7 +38,7 @@ export function CommunityShell({ activeItem, children, aside, query = "", mainCl
           }}
         />
         <main className={`min-w-0 ${mainClassName}`}>{children}</main>
-        {!writingMode && (aside ?? <div className="hidden lg:block" />)}
+        {!writingMode && !readingMode && (aside ?? <div className="hidden lg:block" />)}
       </div>
     </div>
   );

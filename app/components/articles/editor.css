@@ -42,7 +42,6 @@
   overflow-x: auto;
 }
 .article-blocknote a { text-decoration: underline; text-underline-offset: 3px; }
-.article-reader .bn-editor { padding-top: 0; }
 @media (max-width: 640px) {
   .article-blocknote .bn-editor { font-size: 16px; }
   .article-writer .article-writing-content { padding: 0 1.5rem 1.5rem; }

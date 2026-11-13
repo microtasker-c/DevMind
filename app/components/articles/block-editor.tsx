@@ -7,6 +7,7 @@ import { articleEditorSchema, toEditorDocument } from "./editor-schema";
 import { EditorToolbar } from "./editor-toolbar";
 import "@blocknote/core/style.css";
 import "./editor.css";
+import "./reader.css";
 
 type Props = {
   document: ArticleDocument;

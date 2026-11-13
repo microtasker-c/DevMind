@@ -1,0 +1,102 @@
+/* Scope reading typography to the read-only view; writing keeps its own rhythm. */
+.article-reader .bn-editor {
+  padding: 0;
+  font-size: 18px;
+  line-height: 1.9;
+}
+
+.article-reader .bn-block-outer {
+  line-height: inherit;
+}
+
+.article-reader .bn-block-content {
+  padding-block: 0;
+}
+
+.article-reader .bn-block-content[data-content-type="paragraph"] {
+  margin-block: 0 1.3em;
+}
+
+.article-reader .bn-block-content[data-content-type="heading"] {
+  margin-block: 1.6em 0.65em;
+  font-size: var(--level);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+}
+
+.article-reader [data-content-type="heading"] { --level: 1.8em; }
+.article-reader [data-content-type="heading"][data-level="2"] { --level: 1.45em; }
+.article-reader [data-content-type="heading"][data-level="3"] { --level: 1.2em; }
+
+.article-reader .bn-block-content:is(
+  [data-content-type="bulletListItem"],
+  [data-content-type="numberedListItem"],
+  [data-content-type="checkListItem"]
+) {
+  margin-bottom: 0.5em;
+}
+
+.article-reader .bn-block-group .bn-block-group {
+  margin-block: 0.4em 0.8em;
+}
+
+.article-reader .bn-block-content[data-content-type="quote"] {
+  margin-block: 1.6em;
+}
+
+.article-reader [data-content-type="quote"] blockquote {
+  border-left: 3px solid var(--foreground);
+  padding: 0.25em 0 0.25em 1.2em;
+  color: var(--muted);
+}
+
+.article-reader .bn-inline-content code {
+  border: 1px solid var(--divider);
+  border-radius: 4px;
+  background: var(--background);
+  padding: 0.12em 0.35em;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.85em;
+}
+
+.article-reader .bn-block-content[data-content-type="codeBlock"] {
+  margin-block: 1.5em;
+  border: 1px solid var(--divider);
+  border-radius: 8px;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.article-reader [data-content-type="codeBlock"] > pre {
+  padding: 1.25rem 1.5rem;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.82em;
+  line-height: 1.75;
+  overflow-wrap: normal;
+}
+
+.article-reader [data-content-type="codeBlock"] .bn-inline-content code {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  font-size: inherit;
+}
+
+.article-reader [data-content-type="divider"] hr {
+  margin-block: 2.5em;
+  border-color: var(--divider);
+}
+
+.article-reader a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.article-reader a:hover { text-decoration-thickness: 2px; }
+.article-reader a:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+@media (min-width: 640px) {
+  .article-reader .bn-editor { font-size: 19px; }
+}

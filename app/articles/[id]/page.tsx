@@ -15,22 +15,34 @@ export default async function ArticlePage({ params }: Props) {
   const article = await getArticle((await params).id);
   if (!article) notFound();
   return (
-    <ArticleLayout>
-      <article>
-        <Link href="/" className="text-sm text-muted hover:underline">返回首页</Link>
-        <h1 className="mt-8 text-3xl leading-tight font-semibold tracking-tight break-words sm:text-4xl">{article.title}</h1>
-        <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-muted">
-          <span className="font-medium text-foreground">{article.author.name}</span>
-          {article.publishedAt && <time dateTime={article.publishedAt}>{new Date(article.publishedAt).toLocaleDateString("zh-CN", { timeZone: "Asia/Shanghai" })}</time>}
-          <span>{article.readingMinutes} 分钟阅读</span>
-        </div>
-        {article.tags.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{article.tags.map((tag) => <Link key={tag} href={`/?q=${encodeURIComponent(tag)}`} className="rounded-full bg-background px-3 py-1 text-xs text-muted">{tag}</Link>)}</div>}
+    <ArticleLayout readingMode>
+      <article className="pb-12 sm:pb-20">
+        <Link href="/" className="inline-flex text-sm text-muted underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4">返回首页</Link>
         {article.coverUrl && (
           // User-provided remote URLs cannot be enumerated in Next Image remotePatterns.
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={article.coverUrl} alt="" referrerPolicy="no-referrer" className="mt-8 max-h-[440px] w-full rounded-lg object-cover" />
+          <img src={article.coverUrl} alt="" referrerPolicy="no-referrer" className="mt-8 h-auto max-h-[560px] w-full rounded-sm object-contain" />
         )}
-        <div className="mt-10"><ArticleBody document={article.document} /></div>
+        <header className="mx-auto mt-10 max-w-[42rem] sm:mt-12">
+          {article.tags.length > 0 && (
+            <div aria-label="技术标签" className="mb-6 flex flex-wrap gap-2">
+              {article.tags.map((tag) => <Link key={tag} href={`/?q=${encodeURIComponent(tag)}`} className="max-w-full rounded-full border border-divider px-3 py-1 text-xs break-words text-muted transition-colors hover:border-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 sm:text-sm">{tag}</Link>)}
+            </div>
+          )}
+          <h1 className="text-[2rem] leading-[1.2] font-bold tracking-[-0.035em] break-words sm:text-5xl">{article.title}</h1>
+          {article.excerpt && <p className="mt-5 text-lg leading-relaxed break-words text-muted sm:text-xl">{article.excerpt}</p>}
+          <div className="mt-8 flex items-center gap-3 border-b border-divider pb-7">
+            <span aria-hidden="true" className="flex size-11 shrink-0 items-center justify-center rounded-full bg-background text-lg font-semibold">{Array.from(article.author.name)[0]}</span>
+            <div className="min-w-0">
+              <p className="text-sm font-medium break-words text-foreground">{article.author.name}</p>
+              <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted sm:text-sm">
+                {article.publishedAt && <time dateTime={article.publishedAt}>{new Date(article.publishedAt).toLocaleDateString("zh-CN", { timeZone: "Asia/Shanghai", year: "numeric", month: "long", day: "numeric" })}</time>}
+                <span>{article.readingMinutes} 分钟阅读</span>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div className="mx-auto mt-9 max-w-[42rem] sm:mt-12"><ArticleBody document={article.document} /></div>
       </article>
     </ArticleLayout>
   );
