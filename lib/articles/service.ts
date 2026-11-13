@@ -1,6 +1,7 @@
 import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "../db/client";
 import { articles, articleContents, articleTags, tags } from "../db/article-schema";
+import { articleBookmarks } from "../db/schema";
 import { ArticleError } from "./errors";
 import { checkArticleEdit, requireArticleWriter } from "./policy";
 import { parseSaveArticle } from "./validation";
@@ -52,4 +53,17 @@ export async function saveArticle(
     }
     return saved;
   });
+}
+
+export async function deleteArticle(authorId: string, id: string) {
+  const db = getDb();
+  const deleted = await db.delete(articles).where(and(eq(articles.id, id), eq(articles.authorId, authorId))).returning({ id: articles.id });
+  if (!deleted.length) throw new ArticleError("NOT_FOUND", "文章不存在或无权删除。");
+}
+
+export async function toggleBookmark(userId: string, articleId: string) {
+  const db = getDb();
+  const existing = await db.select().from(articleBookmarks).where(and(eq(articleBookmarks.userId, userId), eq(articleBookmarks.articleId, articleId))).limit(1);
+  if (existing.length) { await db.delete(articleBookmarks).where(and(eq(articleBookmarks.userId, userId), eq(articleBookmarks.articleId, articleId))); return false; }
+  await db.insert(articleBookmarks).values({ userId, articleId, createdAt: new Date() }); return true;
 }

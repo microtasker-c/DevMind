@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getArticle } from "@/lib/articles/queries";
 import { ArticleBody } from "@/app/components/articles/article-body";
 import { ArticleLayout } from "@/app/components/articles/article-layout";
+import { BookmarkButton } from "@/app/components/articles/bookmark-button";
 
 const getCachedArticle = cache(getArticle);
 
@@ -27,11 +28,12 @@ export default async function ArticlePage({ params }: Props) {
           <img src={article.coverUrl} alt="" referrerPolicy="no-referrer" className="mt-8 h-auto max-h-[560px] w-full rounded-sm object-contain" />
         )}
         <header className="mx-auto mt-10 max-w-[42rem] sm:mt-12">
-          {article.tags.length > 0 && (
-            <div aria-label="技术标签" className="mb-6 flex flex-wrap gap-2">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            {article.tags.length > 0 ? <div aria-label="技术标签" className="flex flex-wrap items-center gap-2">
               {article.tags.map((tag) => <Link key={tag} href={`/?q=${encodeURIComponent(tag)}`} className="max-w-full rounded-full border border-divider px-3 py-1 text-xs break-words text-muted transition-colors hover:border-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 sm:text-sm">{tag}</Link>)}
-            </div>
-          )}
+            </div> : <span />}
+            <BookmarkButton articleId={article.id} />
+          </div>
           <h1 className="text-[2rem] leading-[1.2] font-bold tracking-[-0.035em] break-words sm:text-5xl">{article.title}</h1>
           {article.excerpt && <p className="mt-5 text-lg leading-relaxed break-words text-muted sm:text-xl">{article.excerpt}</p>}
           <div className="mt-8 flex items-center gap-3 border-b border-divider pb-7">

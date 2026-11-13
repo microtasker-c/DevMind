@@ -47,3 +47,9 @@ export const verification = pgTable("verification", {
   createdAt: timestamp("created_at", { withTimezone: true }),
   updatedAt: timestamp("updated_at", { withTimezone: true }),
 }, (table) => [index("verification_identifier_idx").on(table.identifier)]);
+
+export const articleBookmarks = pgTable("article_bookmarks", {
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  articleId: text("article_id").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+}, (table) => [index("article_bookmarks_user_idx").on(table.userId, table.createdAt)]);

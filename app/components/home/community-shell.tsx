@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import type { Route } from "next";
 import type { ReactNode } from "react";
 import { Sidebar } from "./sidebar";
 import { Topbar } from "./topbar";
@@ -35,6 +36,7 @@ export function CommunityShell({ activeItem, children, aside, query = "", mainCl
             if (item === "我的文章") router.push("/my/articles");
             if (item === "个人资料") router.push("/settings/account");
             if (item === "首页") router.push("/");
+            if (item === "收藏") router.push("/bookmarks" as Route);
           }}
         />
         <main className={`min-w-0 ${mainClassName}`}>{children}</main>

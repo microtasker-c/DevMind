@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
-import { saveArticle, ArticleError } from "@/lib/articles/service";
+import { saveArticle, deleteArticle, toggleBookmark, ArticleError } from "@/lib/articles/service";
 
 export async function saveArticleAction(input: unknown): Promise<
   { ok: true; id: string; revision: number } | { ok: false; message: string }
@@ -26,4 +26,16 @@ export async function saveArticleAction(input: unknown): Promise<
     console.error("Article save failed", error instanceof Error ? error.name : "UnknownError");
     return { ok: false, message: "保存失败，请稍后重试。当前编辑内容仍保留在页面中。" };
   }
+}
+
+export async function deleteArticleAction(id: string) {
+  try { const session = await auth.api.getSession({ headers: await headers(), query: { disableCookieCache: true } }); if (!session) return { ok: false, message: "请先登录" }; await deleteArticle(session.user.id, id); revalidatePath("/my/articles"); revalidatePath("/"); return { ok: true }; }
+  catch (error) { return { ok: false, message: error instanceof ArticleError ? error.message : "删除失败，请稍后重试" }; }
+}
+
+export async function toggleBookmarkAction(articleId: string) {
+  const session = await auth.api.getSession({ headers: await headers(), query: { disableCookieCache: true } });
+  if (!session) return { ok: false, message: "请先登录" };
+  try { const bookmarked = await toggleBookmark(session.user.id, articleId); revalidatePath(`/articles/${articleId}`); revalidatePath("/bookmarks"); return { ok: true, bookmarked }; }
+  catch (error) { console.error("Bookmark toggle failed", error instanceof Error ? error.message : error); return { ok: false, message: "收藏失败，请稍后重试" }; }
 }

@@ -1,7 +1,7 @@
 import { and, desc, eq, getTableColumns, ilike, inArray, lt, or, sql } from "drizzle-orm";
 import { getDb } from "../db/client";
 import { retryDatabaseRead } from "../db/read";
-import { user } from "../db/schema";
+import { articleBookmarks, user } from "../db/schema";
 import { articles, articleContents, articleTags, tags } from "../db/article-schema";
 import { parseArticleDocument } from "./document-schema";
 import { ArticleError } from "./errors";
@@ -97,4 +97,14 @@ export async function listMyArticles(authorId: string, database?: QueryDatabase)
       .where(eq(articles.authorId, authorId)).orderBy(desc(articles.updatedAt), desc(articles.id));
     return toSummaries(rows, db);
   });
+}
+
+export async function listBookmarkedArticles(userId: string): Promise<ArticleSummary[]> {
+  const db = getDb();
+  const rows = await db.select(selection).from(articleBookmarks)
+    .innerJoin(articles, sql`${articleBookmarks.articleId}::uuid = ${articles.id}`)
+    .innerJoin(user, eq(articles.authorId, user.id))
+    .where(and(eq(articleBookmarks.userId, userId), eq(articles.status, "published")))
+    .orderBy(desc(articleBookmarks.createdAt));
+  return toSummaries(rows, db);
 }

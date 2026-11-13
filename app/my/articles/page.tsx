@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireSession } from "@/lib/auth/guard";
 import { listMyArticles } from "@/lib/articles/queries";
 import { ArticleLayout } from "@/app/components/articles/article-layout";
+import { DeleteArticleButton } from "@/app/components/articles/delete-article-button";
 
 export const metadata = { title: "我的文章 · Dev-Mind" };
 export default async function MyArticlesPage() {
@@ -16,7 +17,10 @@ export default async function MyArticlesPage() {
         <li key={article.id} className="space-y-3 py-6">
           <p className="text-xs text-muted">{article.status === "published" ? "已发布" : "草稿"} · 更新于 {new Date(article.updatedAt).toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })}</p>
           <h2 className="text-xl font-semibold break-words"><Link href={article.status === "published" ? `/articles/${article.id}` : `/articles/${article.id}/edit`}>{article.title || "无标题草稿"}</Link></h2>
-          <div className="flex gap-5 text-sm">{article.status === "published" ? <Link className="underline underline-offset-4" href={`/articles/${article.id}`}>阅读文章</Link> : <Link className="underline underline-offset-4" href={`/articles/${article.id}/edit`}>继续编辑</Link>}</div>
+          <div className="flex w-full items-center justify-between text-sm">
+            {article.status === "published" ? <Link className="underline underline-offset-4" href={`/articles/${article.id}`}>阅读文章</Link> : <Link className="underline underline-offset-4" href={`/articles/${article.id}/edit`}>继续编辑</Link>}
+            <DeleteArticleButton id={article.id} />
+          </div>
         </li>
       ))}</ul> : <div className="py-16 text-center"><p className="text-muted">还没有文章，把你的第一个技术发现写下来。</p><Link href="/write" className="mt-5 inline-block underline underline-offset-4">开始写作</Link></div>}
     </ArticleLayout>
